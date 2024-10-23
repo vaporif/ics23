@@ -20,6 +20,7 @@ pub fn verify_membership<H: HostFunctionsProvider>(
     key: &[u8],
     value: &[u8],
 ) -> bool {
+    tracing::info!("INSIDE ICS23");
     // ugly attempt to conditionally decompress...
     let mut proof = proof;
     let my_proof;
