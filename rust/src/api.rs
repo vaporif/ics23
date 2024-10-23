@@ -26,6 +26,7 @@ pub fn verify_membership<H: HostFunctionsProvider>(
     let my_proof;
     if is_compressed(proof) {
         if let Ok(p) = decompress(proof) {
+            tracing::info!("decompressed");
             my_proof = p;
             proof = &my_proof;
         } else {
@@ -35,9 +36,11 @@ pub fn verify_membership<H: HostFunctionsProvider>(
 
     //    if let Some(ics23::commitment_proof::Proof::Exist(ex)) = &proof.proof {
     if let Some(ex) = get_exist_proof(proof, key) {
+        tracing::info!("exist proof found");
         let valid = verify_existence::<H>(ex, spec, root, key, value);
         valid.is_ok()
     } else {
+        tracing::info!("exist proof not found");
         false
     }
 }
