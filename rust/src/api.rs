@@ -39,7 +39,14 @@ pub fn verify_membership<H: HostFunctionsProvider>(
         tracing::info!("exist proof found");
         let valid = verify_existence::<H>(ex, spec, root, key, value);
         if let Err(ref reason) = valid {
-            tracing::error!(error = ?reason, "Proof is invalid");
+            tracing::error!(
+                error = ?reason,
+                expected_value = ?value,
+                proof_value = ?ex.value,
+                ?key,
+                ?root,
+                "Proof is invalid"
+            );
         } else {
             tracing::info!("proof is valid");
         }
