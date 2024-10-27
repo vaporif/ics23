@@ -41,10 +41,10 @@ pub fn verify_membership<H: HostFunctionsProvider>(
         if let Err(ref reason) = valid {
             tracing::error!(
                 error = ?reason,
-                expected_value = ?value,
-                proof_value = ?ex.value,
-                ?key,
-                ?root,
+                expected_value = ?hex::encode(value),
+                proof_value = ?hex::encode(&ex.value),
+                key = %String::from_utf8_lossy(key),
+                root = ?hex::encode(root),
                 "Proof is invalid"
             );
         } else {
