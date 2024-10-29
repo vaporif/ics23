@@ -11,8 +11,18 @@ use crate::ics23;
 use crate::ops::do_hash;
 use crate::verify::{verify_existence, verify_non_existence, CommitmentRoot};
 
+use tracing::instrument;
 // Use CommitmentRoot vs &[u8] to stick with ics naming
 #[allow(clippy::ptr_arg)]
+#[instrument(
+    level = "info",
+    fields(
+        key = %String::from_utf8_lossy(key),
+        value = hex::encode(value),
+        root = hex::encode(root),
+    ),
+    skip(proof, spec) // Skip complex types that might not implement Debug
+)]
 pub fn verify_membership<H: HostFunctionsProvider>(
     proof: &ics23::CommitmentProof,
     spec: &ics23::ProofSpec,
@@ -20,7 +30,6 @@ pub fn verify_membership<H: HostFunctionsProvider>(
     key: &[u8],
     value: &[u8],
 ) -> bool {
-    tracing::info!("INSIDE ICS23");
     // ugly attempt to conditionally decompress...
     let mut proof = proof;
     let my_proof;
@@ -43,8 +52,6 @@ pub fn verify_membership<H: HostFunctionsProvider>(
                 error = ?reason,
                 expected_value = ?hex::encode(value),
                 proof_value = ?hex::encode(&ex.value),
-                key = %String::from_utf8_lossy(key),
-                root = ?hex::encode(root),
                 "Proof is invalid"
             );
         } else {
